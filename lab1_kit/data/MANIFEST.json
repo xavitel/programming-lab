@@ -1,0 +1,20 @@
+{
+  "mnist_sample_20.csv": {
+    "bytes": 40273,
+    "columns": 785,
+    "rows": 20,
+    "sha256": "6a76631dbadbe96a9cd90a03599def0c39e561adc304c3fff3347d42f8e8406f"
+  },
+  "mnist_test_2k.csv.gz": {
+    "bytes": 428859,
+    "columns": 785,
+    "rows": 2000,
+    "sha256": "ec8676f705028f56f39ca8325755b1d0fdf647903678bab9d4d57eee065eaa2d"
+  },
+  "mnist_train_10k.csv.gz": {
+    "bytes": 2135949,
+    "columns": 785,
+    "rows": 10000,
+    "sha256": "07b953c0cd54cdce611d4fed775118b1efebe95fa12458123ea5374c23782088"
+  }
+}
