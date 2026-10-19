@@ -1,0 +1,44 @@
+{
+  "mnist_sample_20.csv": {
+    "bytes": 40273,
+    "columns": 785,
+    "rows": 20,
+    "sha256": "6a76631dbadbe96a9cd90a03599def0c39e561adc304c3fff3347d42f8e8406f"
+  },
+  "mnist_test_2k.csv.gz": {
+    "bytes": 428859,
+    "columns": 785,
+    "rows": 2000,
+    "sha256": "ec8676f705028f56f39ca8325755b1d0fdf647903678bab9d4d57eee065eaa2d"
+  },
+  "mnist_test_2k_14x14.csv.gz": {
+    "bytes": 177442,
+    "columns": 197,
+    "rows": 2000,
+    "sha256": "79ba73c72950460eefd93c3781b8cd24935b62dd6702d159d1f4cb0e4a9e4108"
+  },
+  "mnist_train_10k.csv.gz": {
+    "bytes": 2135949,
+    "columns": 785,
+    "rows": 10000,
+    "sha256": "07b953c0cd54cdce611d4fed775118b1efebe95fa12458123ea5374c23782088"
+  },
+  "mnist_train_10k_14x14.csv.gz": {
+    "bytes": 881364,
+    "columns": 197,
+    "rows": 10000,
+    "sha256": "ac1df1178d25e1f8fb5160d36ee1ba8522020e14dc7f3da8af497fa5c9bfb8e1"
+  },
+  "postcodes_test.csv": {
+    "bytes": 10013,
+    "columns": 7,
+    "rows": 300,
+    "sha256": "cbe0d9dc30a5debf51e9379ce7e7d1893bbc1beaeb65b6d0229f25d9f414a45e"
+  },
+  "valid_postcodes.txt": {
+    "bytes": 330,
+    "columns": 1,
+    "rows": 55,
+    "sha256": "93218cacbb37af428684fec7efb9875e12e7fc141fe1dcef1c4edd84de5b35a2"
+  }
+}
