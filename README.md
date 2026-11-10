@@ -6,7 +6,7 @@ Each lab of the course has its own folder here, published two days before the se
 |---|---|---|---|---|
 | 1 · Read One Digit | Wed 14 Oct | [`lab1_kit/`](lab1_kit/) | [lab1_kit.zip](../../releases/tag/lab1) | Colab: see `START_HERE.md`, Route B |
 | 2 · Read a Postcode, Pythonically | Wed 21 Oct | [`lab2_kit/`](lab2_kit/) | [lab2_kit.zip](../../releases/tag/lab2) | [Open in Colab](https://colab.research.google.com/github/xavitel/programming-lab/blob/main/lab2_kit/lab2_read_a_postcode.ipynb) |
-| 3 · The Scanner Mess | Wed 11 Nov | coming soon | | |
+| 3 · The Scanner Mess | Wed 11 Nov | [`lab3_kit/`](lab3_kit/) | [lab3_kit.zip](../../releases/tag/lab3) | [Open in Colab](https://colab.research.google.com/github/xavitel/programming-lab/blob/main/lab3_kit/lab3_scanner_mess.ipynb) |
 | 4 · Ship It to the Depot | Wed 18 Nov | coming soon | | |
 | 5 · The Model Arena | Tue 1 Dec | coming soon | | |
 

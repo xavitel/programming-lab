@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Draw a digit</title>
+<style>
+  :root {
+    --bg: #1C1D1F;        /* page background */
+    --text: #C2C4B5;      /* body text: 9.5:1 on --bg */
+    --cream: #E1E5CD;     /* headings, ink, focus ring: 13.1:1 on --bg */
+    --sage: #9FA582;      /* accent: 6.6:1 on --bg; --bg text on sage: 6.6:1 */
+    --sage-hover: #B4B99A;
+    --card: #292A2C;      /* drawing box */
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: dark; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { color: var(--cream); font-size: 1.6rem; line-height: 1.25; margin: 0 0 8px; }
+  h2 { color: var(--cream); font-size: 1.05rem; margin: 0 0 8px; }
+  p { margin: 0 0 12px; }
+  ol { margin: 0 0 20px; padding-left: 1.4em; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--cream); }
+  code { font-family: Consolas, "SF Mono", Menlo, monospace; color: var(--cream); }
+  .panels { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; margin-bottom: 16px; }
+  .panel { flex: 0 0 auto; }
+  #pad {
+    display: block;
+    width: 280px; height: 280px;
+    background: var(--card);
+    border: 2px solid var(--sage);
+    border-radius: 6px;
+    touch-action: none;           /* finger and pen draw instead of scrolling */
+    cursor: crosshair;
+  }
+  #preview {
+    display: block;
+    width: 168px; height: 168px;  /* 28 x 28 cells, 6 screen pixels each */
+    border: 2px solid var(--sage);
+    border-radius: 4px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    background: #000;
+  }
+  .caption { font-size: 0.9rem; margin-top: 6px; max-width: 280px; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 12px; margin: 4px 0 12px; }
+  button {
+    font: inherit;
+    font-weight: 600;
+    min-height: 44px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: 2px solid var(--sage);
+    background: transparent;
+    color: var(--cream);
+    cursor: pointer;
+  }
+  button.primary { background: var(--sage); color: var(--bg); }
+  button:hover { background: var(--sage-hover); border-color: var(--sage-hover); color: var(--bg); }
+  :focus-visible, button:focus-visible, textarea:focus-visible {
+    outline: 3px solid var(--cream);
+    outline-offset: 3px;
+  }
+  #status { min-height: 1.5em; color: var(--cream); }
+  label { display: block; color: var(--cream); font-weight: 600; margin: 8px 0 4px; }
+  textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 12em;
+    padding: 8px;
+    font: 12px/1.35 Consolas, "SF Mono", Menlo, monospace;
+    color: var(--text);
+    background: var(--card);
+    border: 2px solid var(--sage);
+    border-radius: 6px;
+    white-space: pre;
+    overflow: auto;
+    resize: vertical;
+  }
+  .note { font-size: 0.9rem; margin-top: 20px; }
+  #server-result { color: var(--cream); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Draw a digit</h1>
+  <p>Draw one digit and send it to your own Python code. Nothing leaves this page: no internet, nothing saved.</p>
+
+  <h2 id="how">How to use it</h2>
+  <ol>
+    <li>Draw <strong>one digit</strong>, large, in the middle of the box: with a mouse, a finger or a pen.</li>
+    <li>Click <strong>Copy 784 numbers</strong>.</li>
+    <li><strong>Paste the numbers into the notebook cell 'Draw your own digit'</strong> and run it.</li>
+  </ol>
+
+  <div class="panels">
+    <div class="panel">
+      <canvas id="pad" width="280" height="280" role="img"
+              aria-label="Drawing box, 280 by 280 pixels. Draw with a mouse, a finger or a pen."
+              aria-describedby="how"></canvas>
+      <p class="caption">Drawing box (280 × 280)</p>
+    </div>
+    <div class="panel">
+      <canvas id="preview" width="28" height="28" role="img"
+              aria-label="Preview: your drawing at 28 by 28 pixels, the size the notebook uses."></canvas>
+      <p class="caption">What Python gets: 28 × 28 pixels,<br>0 = paper, 255 = ink</p>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button type="button" id="clear">Clear</button>
+    <button type="button" id="copy" class="primary">Copy 784 numbers</button>
+    <button type="button" id="download">Download .txt</button>
+    <button type="button" id="ask-server" hidden>Ask the server (Lab 4)</button>
+  </div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <p id="server-result" aria-live="polite" hidden></p>
+
+  <label for="numbers">The 784 numbers (28 lines of 28)</label>
+  <textarea id="numbers" readonly spellcheck="false" autocomplete="off" wrap="off"></textarea>
+
+  <p class="note">The numbers are the raw drawing: each one is the average ink of a 10 × 10 block of the box, from
+    0 (paper) to 255 (ink). Cropping, scaling and centring happen in Python (<code>prepare_drawing</code>), so you
+    can read every step. No mouse or touch screen? Use the typed sketch in the notebook (<code>sketch_to_image</code>).
+  </p>
+</main>
+
+<script>
+/* BEGIN PURE: no DOM access below this line until END PURE (qa/test_draw_digit.py runs it in Node). */
+var CANVAS_SIZE = 280;
+var GRID = 28;
+var BLOCK = CANVAS_SIZE / GRID;   // 10 canvas pixels per digit pixel
+
+/** RGBA pixels of the 280 x 280 box -> 784 ints: the floor average of the alpha (ink) in each 10 x 10 block. */
+function downsampleAlpha(rgba, size, grid) {
+  size = size || CANVAS_SIZE;
+  grid = grid || GRID;
+  var block = size / grid;
+  var area = block * block;
+  var out = new Array(grid * grid);
+  for (var r = 0; r < grid; r++) {
+    for (var c = 0; c < grid; c++) {
+      var sum = 0;
+      for (var y = r * block; y < (r + 1) * block; y++) {
+        var row = y * size;
+        for (var x = c * block; x < (c + 1) * block; x++) {
+          sum += rgba[(row + x) * 4 + 3];
+        }
+      }
+      out[r * grid + c] = Math.floor(sum / area);
+    }
+  }
+  return out;
+}
+
+/** 784 ints -> 28 lines of 28 space-separated ints (no trailing newline). */
+function formatGrid(values, grid) {
+  grid = grid || GRID;
+  var lines = [];
+  for (var r = 0; r < grid; r++) {
+    lines.push(values.slice(r * grid, (r + 1) * grid).join(" "));
+  }
+  return lines.join("\n");
+}
+
+/** How many of the 784 cells contain any ink. */
+function inkCells(values) {
+  var n = 0;
+  for (var i = 0; i < values.length; i++) {
+    if (values[i] > 0) { n++; }
+  }
+  return n;
+}
+/* END PURE */
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var pad = document.getElementById("pad");
+  var ctx = pad.getContext("2d", { willReadFrequently: true });
+  var preview = document.getElementById("preview");
+  var pctx = preview.getContext("2d");
+  var numbers = document.getElementById("numbers");
+  var statusLine = document.getElementById("status");
+  var serverButton = document.getElementById("ask-server");
+  var serverResult = document.getElementById("server-result");
+  var BRUSH = 22;                 // stroke width in canvas pixels (about 2 digit pixels, like MNIST pens)
+  var drawing = false;
+  var activePointer = null;
+  var last = null;
+  var pending = false;
+  var values = new Array(GRID * GRID).fill(0);
+
+  function say(text) { statusLine.textContent = text; }
+
+  function setupBrush() {
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = BRUSH;
+    ctx.strokeStyle = "#E1E5CD";
+    ctx.fillStyle = "#E1E5CD";
+  }
+
+  function position(event) {
+    var box = pad.getBoundingClientRect();
+    return {
+      x: (event.clientX - box.left - pad.clientLeft) * (pad.width / pad.clientWidth),
+      y: (event.clientY - box.top - pad.clientTop) * (pad.height / pad.clientHeight)
+    };
+  }
+
+  function dot(p) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, BRUSH / 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function segment(a, b) {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  }
+
+  function refresh() {
+    pending = false;
+    values = downsampleAlpha(ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE).data, CANVAS_SIZE, GRID);
+    var image = pctx.createImageData(GRID, GRID);
+    for (var i = 0; i < values.length; i++) {
+      var v = values[i];
+      image.data[i * 4] = v;
+      image.data[i * 4 + 1] = v;
+      image.data[i * 4 + 2] = v;
+      image.data[i * 4 + 3] = 255;
+    }
+    pctx.putImageData(image, 0, 0);
+    numbers.value = formatGrid(values, GRID);
+  }
+
+  function schedule() {
+    if (!pending) {
+      pending = true;
+      window.requestAnimationFrame(refresh);
+    }
+  }
+
+  function finishStroke(event) {
+    if (!drawing || (event && event.pointerId !== activePointer)) { return; }
+    drawing = false;
+    activePointer = null;
+    last = null;
+    refresh();
+    say("Ink in " + inkCells(values) + " of 784 cells. Ready to copy.");
+  }
+
+  pad.addEventListener("pointerdown", function (event) {
+    if (drawing || (event.pointerType === "mouse" && event.button !== 0)) { return; }
+    event.preventDefault();
+    try { pad.setPointerCapture(event.pointerId); } catch (e) { /* older browsers */ }
+    drawing = true;
+    activePointer = event.pointerId;
+    last = position(event);
+    dot(last);
+    schedule();
+  });
+
+  pad.addEventListener("pointermove", function (event) {
+    if (!drawing || event.pointerId !== activePointer) { return; }
+    event.preventDefault();
+    var events = (typeof event.getCoalescedEvents === "function") ? event.getCoalescedEvents() : [];
+    if (!events.length) { events = [event]; }
+    for (var i = 0; i < events.length; i++) {
+      var p = position(events[i]);
+      segment(last, p);
+      last = p;
+    }
+    schedule();
+  });
+
+  pad.addEventListener("pointerup", finishStroke);
+  pad.addEventListener("pointercancel", finishStroke);
+  pad.addEventListener("lostpointercapture", finishStroke);
+  pad.addEventListener("contextmenu", function (event) { event.preventDefault(); });
+
+  document.getElementById("clear").addEventListener("click", function () {
+    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    refresh();
+    serverResult.hidden = true;
+    say("Cleared. Draw a new digit.");
+  });
+
+  function ready() {
+    refresh();
+    if (inkCells(values) === 0) {
+      say("The box is empty: draw a digit first.");
+      return false;
+    }
+    return true;
+  }
+
+  function selectNumbers() {
+    numbers.focus();
+    numbers.select();
+    numbers.setSelectionRange(0, numbers.value.length);
+  }
+
+  document.getElementById("copy").addEventListener("click", function () {
+    if (!ready()) { return; }
+    var text = numbers.value;
+    var done = "Copied 784 numbers. Paste them into the notebook cell 'Draw your own digit'.";
+    var fallback = function () {
+      selectNumbers();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      say(ok ? done : "Your browser blocked automatic copying. The numbers below are selected: press Ctrl+C " +
+          "(Windows) or Cmd+C (macOS), then paste them into the notebook cell 'Draw your own digit'.");
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(function () { say(done); }, fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  document.getElementById("download").addEventListener("click", function () {
+    if (!ready()) { return; }
+    var blob = new Blob([numbers.value + "\n"], { type: "text/plain;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = "my_digit.txt";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    say("Saved my_digit.txt (28 lines of 28 numbers) to your downloads folder.");
+  });
+
+  // Lab 4 (Builder L2): when this page is served by `digits.py serve`, ask its /predict endpoint.
+  if (location.protocol === "http:" || location.protocol === "https:") {
+    serverButton.hidden = false;
+    serverButton.addEventListener("click", function () {
+      if (!ready()) { return; }
+      serverResult.hidden = false;
+      serverResult.textContent = "Asking the server...";
+      fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pixels: values })
+      }).then(function (response) {
+        if (!response.ok) { throw new Error("HTTP " + response.status); }
+        return response.json();
+      }).then(function (data) {
+        var top = (data && data.top3) || [];
+        serverResult.textContent = top.length
+          ? "Server says: " + top.map(function (pair) { return pair[0] + " (score " + pair[1] + ")"; }).join(", ")
+          : "The server answered, but without a top3 list.";
+      }).catch(function (error) {
+        serverResult.textContent = "No answer from /predict (" + error.message + "). This button needs the " +
+          "Lab 4 serve command.";
+      });
+    });
+  }
+
+  setupBrush();
+  refresh();
+  say("Ready: draw a digit in the box.");
+})();
+</script>
+</body>
+</html>

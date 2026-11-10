@@ -1,0 +1,68 @@
+{
+  "depots_reference.csv": {
+    "bytes": 130,
+    "columns": null,
+    "rows": null,
+    "sha256": "f501b39004d5b9a29ea933b8a8111a44f3da265dad9e2035788b061e1d08adc2"
+  },
+  "fixtures/scans_fixture.csv": {
+    "bytes": 65669,
+    "columns": null,
+    "rows": null,
+    "sha256": "3d8dae3e2beffe83c08433b1ef28eaef98812016987ef895fb6866a835b088c6"
+  },
+  "holdout/parcel_scans_batch_b.csv": {
+    "bytes": 960364,
+    "columns": null,
+    "rows": null,
+    "sha256": "34a5288fa76a633e694ce92731e21986640b2d28dc1f1f379b439cb8cc4a7c3a"
+  },
+  "holdout/parcel_scans_batch_c.csv": {
+    "bytes": 949856,
+    "columns": null,
+    "rows": null,
+    "sha256": "46a35026ddfc19ec827f0391a2b01cb26d839e30fa6f7c5b2d565bd8f73531ae"
+  },
+  "mnist_test_2k.csv.gz": {
+    "bytes": 428859,
+    "columns": 785,
+    "rows": 2000,
+    "sha256": "ec8676f705028f56f39ca8325755b1d0fdf647903678bab9d4d57eee065eaa2d"
+  },
+  "mnist_test_2k_14x14.csv.gz": {
+    "bytes": 177442,
+    "columns": 197,
+    "rows": 2000,
+    "sha256": "79ba73c72950460eefd93c3781b8cd24935b62dd6702d159d1f4cb0e4a9e4108"
+  },
+  "mnist_train_10k.csv.gz": {
+    "bytes": 2135949,
+    "columns": 785,
+    "rows": 10000,
+    "sha256": "07b953c0cd54cdce611d4fed775118b1efebe95fa12458123ea5374c23782088"
+  },
+  "mnist_train_10k_14x14.csv.gz": {
+    "bytes": 881364,
+    "columns": 197,
+    "rows": 10000,
+    "sha256": "ac1df1178d25e1f8fb5160d36ee1ba8522020e14dc7f3da8af497fa5c9bfb8e1"
+  },
+  "parcel_scans_last_month.csv": {
+    "bytes": 38461,
+    "columns": null,
+    "rows": null,
+    "sha256": "784af27b23586a36e833075c23c0d1ce605a93ad994e5d670a434e837cd9399c"
+  },
+  "parcel_scans_raw.csv": {
+    "bytes": 3944801,
+    "columns": null,
+    "rows": null,
+    "sha256": "a15f519e95566c9ff0956429f0a37c81a233baca79686e4b3822c1967ab4fd5c"
+  },
+  "valid_postcodes.txt": {
+    "bytes": 330,
+    "columns": 1,
+    "rows": 55,
+    "sha256": "93218cacbb37af428684fec7efb9875e12e7fc141fe1dcef1c4edd84de5b35a2"
+  }
+}
