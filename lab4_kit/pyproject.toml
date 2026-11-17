@@ -1,0 +1,21 @@
+[project]
+name = "garabato-lab-kit"
+version = "2026.10.1"
+description = "Programming Lab (MCSBT, IE University): student kit"
+requires-python = ">=3.10"
+dependencies = ["ipykernel>=6.29"]
+
+[dependency-groups]
+extras = [
+  "numpy>=2.2; python_version < '3.11'",
+  "numpy>=2.3.3; python_version >= '3.11'",
+  "matplotlib>=3.10",
+]
+dev = ["pytest>=8"]
+nn = ["scikit-learn>=1.6"]
+torch = ["torch>=2.6"]
+web = ["fastapi", "uvicorn"]
+dash = ["streamlit", "pandas"]
+
+[tool.uv]
+package = false

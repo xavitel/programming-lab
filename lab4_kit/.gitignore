@@ -1,0 +1,14 @@
+# Python and Jupyter
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Files your code writes
+output/
+
+# The full MNIST download from tools/get_full_mnist.py (about 11 MB)
+data/full/
